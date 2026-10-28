@@ -5,12 +5,12 @@ Supports Hetzner Storage Box (SFTP), Cloudflare R2 (S3), and local repositories.
 
 ## Releases
 
-GitHub Actions tests every push/PR. After committing and pushing your changes,
-publish Linux amd64/arm64 archives (binary, installer, config, SHA256 checksums):
+GitHub Actions runs only on version tags: tests, then publishes Linux amd64/arm64
+archives (binary, installer, config, SHA256 checksums). Commit and push changes first:
 
 ```sh
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.2
+git push origin v0.1.2
 ```
 
 Download and extract your architecture's archive from GitHub Releases. Use
