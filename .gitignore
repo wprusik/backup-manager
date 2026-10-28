@@ -3,4 +3,5 @@
 /dist/
 /config.yaml
 *.test
+!Dockerfile.test
 coverage.out
