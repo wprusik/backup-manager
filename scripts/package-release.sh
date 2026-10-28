@@ -18,7 +18,10 @@ for arch in amd64 arm64; do
   mkdir -p "$stage/scripts" "$stage/deploy"
   GOOS=linux GOARCH="$arch" CGO_ENABLED=0 go build -trimpath \
     -ldflags "-s -w -X main.version=$version" -o "$stage/backup-manager" .
-  install -m 0644 README.md config.example.yaml "$stage/"
+  sed -e "s/@VERSION@/$version/g" -e "s/@ARCH@/$arch/g" \
+    deploy/README.release.md > "$stage/README.md"
+  chmod 0644 "$stage/README.md"
+  install -m 0644 config.example.yaml "$stage/"
   install -m 0755 scripts/install-systemd.sh "$stage/scripts/"
   install -m 0644 deploy/backup-manager.service deploy/backup-manager.timer "$stage/deploy/"
   tar -czf "$output_dir/backup-manager_${version}_linux_${arch}.tar.gz" -C "$stage" .

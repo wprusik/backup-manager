@@ -15,14 +15,12 @@ git push origin v0.1.2
 
 Download and extract your architecture's archive from GitHub Releases. Use
 `./backup-manager` instead of `./dist/backup-manager` in the install command below.
+The archive includes a short [installation guide](deploy/README.release.md) as `README.md`.
 
 ## Setup
 
 Requires Linux/systemd, cgroups v2, restic >= 0.17.3, OpenSSH, and `pg_dump`
 (client major version >= server). Build with Go >= 1.23.
-
-**Windows / PowerShell:** run `.\build.ps1` to build Linux amd64 and arm64 binaries
-in `dist/`. Use `.\build.ps1 -Arch amd64` to build just one architecture.
 
 ```sh
 go build -trimpath -o dist/backup-manager .
