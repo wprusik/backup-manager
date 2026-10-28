@@ -8,7 +8,7 @@ import (
 	"syscall"
 )
 
-const version = "0.1.0"
+var version = "0.1.0" // Overridden from the release tag through -ldflags.
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
