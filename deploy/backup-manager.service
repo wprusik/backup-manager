@@ -1,0 +1,32 @@
+[Unit]
+Description=Encrypted server backup (restic + PostgreSQL)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+UMask=0077
+ExecStart=/usr/local/bin/backup-manager --config /etc/backup-manager/config.yaml backup
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+RuntimeDirectory=backup-manager
+RuntimeDirectoryMode=0700
+RuntimeDirectoryPreserve=yes
+# A private, bounded RAM filesystem for restic's encrypted temporary packs.
+TemporaryFileSystem=/run/backup-manager-tmp:rw,size=256M,mode=0700
+MemoryHigh=768M
+MemoryMax=1G
+MemorySwapMax=0
+OOMPolicy=stop
+KillMode=control-group
+TimeoutStartSec=infinity
+TimeoutStopSec=30s
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=read-only
+StandardOutput=journal
+StandardError=journal

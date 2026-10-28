@@ -1,0 +1,6 @@
+.git
+.idea
+.cache
+dist
+config.yaml
+coverage.out

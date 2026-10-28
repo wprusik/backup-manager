@@ -1,0 +1,63 @@
+# Copy to /etc/backup-manager/config.yaml, chown root:root, chmod 600.
+id: server
+host: server-01 # Stable identity; keep this value when recovering on a new machine.
+lock_file: /run/backup-manager/manager.lock
+
+repository:
+  # Hetzner Storage Box: relative path "backups/server-01" in the account's home.
+  # Set up root's SSH key and known_hosts first (see README).
+  url: "sftp://u123456@u123456.your-storagebox.de:23/backups/server-01"
+  password: "CHANGE-ME-long-unique-restic-encryption-password"
+  # Alternatively remove password and use:
+  # password_file: /etc/backup-manager/restic-password
+
+  # Local backend: url: /mnt/backups/restic
+  # Cloudflare R2 (create the bucket first):
+  # url: "s3:https://ACCOUNT_ID.r2.cloudflarestorage.com/BUCKET/server-01"
+  # s3:
+  #   access_key_id: "R2_ACCESS_KEY_ID"
+  #   secret_access_key: "R2_SECRET_ACCESS_KEY"
+  #   region: auto
+
+restic:
+  binary: /usr/bin/restic # restic >= 0.17.3
+  temp_dir: /run/backup-manager-tmp
+  require_tmpfs: true
+  pack_size_mib: 16
+  connections: 2
+  read_concurrency: 1
+  max_procs: 2
+  memory_limit: 512MiB # Go soft limit; systemd provides the hard limit.
+
+files:
+  paths:
+    - /etc
+    - /srv
+    - /var/www
+  exclude:
+    - /etc/backup-manager # Keep encryption credentials separately, offline.
+    - /srv/cache
+    - "*.tmp"
+    - /var/www/app/node_modules
+  one_file_system: false
+  with_atime: false
+
+postgres:
+  binary: /usr/bin/pg_dump # Client version >= server major version.
+  databases:
+    - name: app # Stable backup name; dump path: /postgres-app.dump
+      database: app
+      host: /var/run/postgresql # Or a TCP hostname/IP.
+      port: 5432
+      user: backup
+      password: "CHANGE-ME-database-password"
+      sslmode: prefer # Use verify-full for remote TLS with a trusted CA.
+      connect_timeout: 15
+    # Add further entries here. Use databases: [] if no PostgreSQL backups.
+
+# Applied only by the explicit forget command; backup never deletes snapshots.
+retention:
+  daily: 7
+  weekly: 4
+  monthly: 12
+  yearly: 2

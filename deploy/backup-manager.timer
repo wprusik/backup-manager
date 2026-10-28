@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily server backup at 03:00 (Europe/Warsaw)
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 Europe/Warsaw
+Persistent=true
+AccuracySec=1min
+Unit=backup-manager.service
+
+[Install]
+WantedBy=timers.target
